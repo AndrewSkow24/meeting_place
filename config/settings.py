@@ -13,6 +13,9 @@ CSRF_TRUSTED_ORIGINS = [
     'https://*.twc1.net',
     'http://*.twc1.net',
     'https://*.apps.timeweb.cloud',
+    'meetingplace.site',
+    'www.meetingplace.site',
+    '*.twc1.net',
 ]
 
 INSTALLED_APPS = [
@@ -22,7 +25,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'core',
+    'core',
+
 ]
 
 MIDDLEWARE = [
