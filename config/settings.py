@@ -7,15 +7,22 @@ SECRET_KEY = 'django-insecure-8x!^5%_^7&*9(@#1qaz2wsx3edc4rfv5tgb6yhn7ujm8ik9ol0
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://*.twc1.net',
-    'http://*.twc1.net',
-    'https://*.apps.timeweb.cloud',
+ALLOWED_HOSTS = [
     'meetingplace.site',
     'www.meetingplace.site',
     '*.twc1.net',
+    'localhost',
+    '127.0.0.1',
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://meetingplace.site',
+    'http://meetingplace.site',
+    'https://www.meetingplace.site',
+    'http://www.meetingplace.site',
+    'https://*.twc1.net',
+    'http://*.twc1.net',
+    'https://*.apps.timeweb.cloud',
 ]
 
 INSTALLED_APPS = [
