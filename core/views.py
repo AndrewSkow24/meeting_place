@@ -4,7 +4,6 @@ import random
 
 
 def index(request):
-    """Главная страница"""
     if request.method == 'POST':
         participants_count = int(request.POST.get('participants_count', 3))
         participants = []
@@ -24,7 +23,6 @@ def index(request):
 
 
 def calculate(request):
-    """Расчёт и результат"""
     participants = request.session.get('participants', [])
 
     if not participants:
@@ -53,16 +51,13 @@ def calculate(request):
         })
 
     best_places = random.sample(meeting_places, min(3, len(meeting_places)))
-    for i, place in enumerate(best_places):
-        place['rank'] = i + 1
-        place['total_time'] = sum(r['time'] for r in routes)
-        place['avg_time'] = place['total_time'] // len(routes)
+    for place in best_places:
+        place['avg_time'] = sum(r['time'] for r in routes) // len(routes)
 
     context = {
         'best_place': best_places[0] if best_places else None,
         'all_places': best_places,
         'routes': routes,
-        'participants': participants,
         'calculated_at': datetime.now().strftime('%d.%m.%Y %H:%M'),
     }
 
