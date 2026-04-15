@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Место встречи - умный выбор места для встреч</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(145deg, #f0f4ff 0%, #e8edf8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Анимированный фон */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation .circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.05));
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .circle-1 { width: 300px; height: 300px; top: -100px; right: -100px; animation-delay: 0s; }
+        .circle-2 { width: 200px; height: 200px; bottom: -50px; left: -50px; animation-delay: -5s; }
+        .circle-3 { width: 150px; height: 150px; top: 40%; right: 20%; animation-delay: -10s; }
+        .circle-4 { width: 250px; height: 250px; bottom: 20%; left: 10%; animation-delay: -3s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(5deg); }
+        }
+
+        /* Основной контейнер */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* Карточка */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(0px);
+            border-radius: 48px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1400px;
+            transition: all 0.3s ease;
+        }
+
+        /* Левая панель с инфо */
+        .info-panel {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .info-panel h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .info-panel .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .info-panel .feature-item i {
+            width: 30px;
+            font-size: 1.3rem;
+        }
+
+        /* Правая панель с формой */
+        .form-panel {
+            padding: 40px;
+            background: white;
+        }
+
+        /* Стили для формы участников */
+        .participant-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.2s;
+            border: 1px solid #e2e8f0;
+        }
+
+        .participant-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .participant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            cursor: pointer;
+        }
+
+        .participant-number {
+            font-weight: 700;
+            color: #667eea;
+            font-size: 0.9rem;
+        }
+
+        .participant-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .participant-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            padding: 10px 14px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
+        }
+
+        .btn-find {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 14px 28px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            border-radius: 40px;
+            width: 100%;
+            color: white;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-find:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Адаптив */
+        @media (max-width: 992px) {
+            .glass-card {
+                max-width: 700px;
+            }
+
+            .info-panel {
+                padding: 30px;
+            }
+
+            .info-panel h1 {
+                font-size: 1.8rem;
+            }
+
+            .form-panel {
+                padding: 30px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 15px;
+                align-items: flex-start;
+            }
+
+            .glass-card {
+                border-radius: 32px;
+            }
+
+            .info-panel {
+                padding: 25px;
+                text-align: center;
+            }
+
+            .info-panel .feature-item {
+                justify-content: center;
+            }
+
+            .form-panel {
+                padding: 25px;
+            }
+        }
+
+        /* Кастомный селект количества */
+        .count-selector {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .count-btn {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            background: white;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .count-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+            color: white;
+        }
+
+        .count-btn:hover:not(.active) {
+            border-color: #667eea;
+            background: #f8fafc;
+        }
+
+        /* Анимация появления */
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation">
+        <div class="circle circle-1"></div>
+        <div class="circle circle-2"></div>
+        <div class="circle circle-3"></div>
+        <div class="circle circle-4"></div>
+    </div>
+
+    <div class="main-container">
+        <div class="glass-card">
+            <div class="row g-0">
+                <!-- Левая панель - информация -->
+                <div class="col-lg-5">
+                    <div class="info-panel">
+                        <h1>🎯 <br>Найди идеальное место для встречи</h1>
+                        <p style="opacity: 0.9; margin-bottom: 30px;">Больше никаких споров о том, где встретиться. Умный алгоритм найдёт оптимальную точку для всех.</p>
+
+                        <div class="feature-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Минимизация времени в пути</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-balance-scale"></i>
+                            <span>Справедливое распределение</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-car"></i>
+                            <span>Учёт всех видов транспорта</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Учёт дорожной ситуации</span>
+                        </div>
+
+                        <div class="mt-4 pt-3">
+                            <div class="d-flex gap-3" style="font-size: 0.85rem; opacity: 0.7;">
+                                <span><i class="fas fa-check-circle"></i> Бесплатно</span>
+                                <span><i class="fas fa-check-circle"></i> Без регистрации</span>
+                                <span><i class="fas fa-check-circle"></i> Мгновенный расчёт</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Правая панель - форма -->
+                <div class="col-lg-7">
+                    <div class="form-panel">
+                        <h3 class="mb-3" style="font-weight: 700; color: #1e293b;">Кто встречается?</h3>
+                        <p class="text-muted mb-4">Укажите участников и их начальные точки</p>
+
+                        <form method="post" id="meetingForm">
+                            {% csrf_token %}
+
+                            <!-- Выбор количества участников -->
+                            <label class="fw-semibold mb-2">Количество участников</label>
+                            <div class="count-selector mb-4">
+                                <div class="count-btn" data-count="2">2 чел</div>
+                                <div class="count-btn active" data-count="3">3 чел</div>
+                                <div class="count-btn" data-count="4">4 чел</div>
+                                <div class="count-btn" data-count="5">5 чел</div>
+                            </div>
+                            <input type="hidden" name="participants_count" id="participantsCount" value="3">
+
+                            <!-- Контейнер для карточек участников -->
+                            <div id="participantsForm" style="max-height: 450px; overflow-y: auto; padding-right: 8px;"></div>
+
+                            <button type="submit" class="btn-find">
+                                <i class="fas fa-search me-2"></i> Найти оптимальное место
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Данные для пресетов
+        const defaultNames = ['Анна', 'Борис', 'Виктор', 'Елена', 'Дмитрий'];
+        const defaultStarts = ['м. Юго-Западная', 'м. Китай-город', 'м. Новослободская', 'м. Парк культуры', 'м. ВДНХ'];
+        const defaultTransports = ['автомобиль', 'метро', 'автобус', 'метро', 'такси'];
+
+        let currentCount = 3;
+
+        function updateParticipantsForm() {
+            const container = document.getElementById('participantsForm');
+            container.innerHTML = '';
+
+            for(let i = 0; i < currentCount; i++) {
+                const isExpanded = i < 2; // первые два развёрнуты по умолчанию
+                container.innerHTML += `
+                    <div class="participant-card fade-in" data-participant="${i}">
+                        <div class="participant-header" onclick="toggleParticipant(${i})">
+                            <span class="participant-number">
+                                <i class="fas fa-user-circle me-1"></i> Участник ${i+1}
+                            </span>
+                            <i class="fas fa-chevron-${isExpanded ? 'up' : 'down'}" id="chevron-${i}" style="color: #94a3b8; cursor: pointer;"></i>
+                        </div>
+                        <div id="participant-content-${i}" style="display: ${isExpanded ? 'block' : 'none'};">
+                            <div class="participant-content">
+                                <div>
+                                    <label class="form-label small fw-semibold">Имя</label>
+                                    <input type="text" name="name_${i}" class="form-control" value="${defaultNames[i % defaultNames.length]}" placeholder="Имя участника">
+                                </div>
+                                <div>
+                                    <label class="form-label small fw-semibold">Стартовая точка</label>
+                                    <input type="text" name="start_${i}" class="form-control" value="${defaultStarts[i % defaultStarts.length]}" placeholder="Адрес или метро">
+                                </div>
+                                <div>
+                                    <label class="form-label small fw-semibold">Транспорт</label>
+                                    <select name="transport_${i}" class="form-select">
+                                        <option value="автомобиль" ${defaultTransports[i % defaultTransports.length] === 'автомобиль' ? 'selected' : ''}>🚗 Личный автомобиль</option>
+                                        <option value="метро" ${defaultTransports[i % defaultTransports.length] === 'метро' ? 'selected' : ''}>🚇 Метро</option>
+                                        <option value="автобус" ${defaultTransports[i % defaultTransports.length] === 'автобус' ? 'selected' : ''}>🚌 Автобус</option>
+                                        <option value="такси" ${defaultTransports[i % defaultTransports.length] === 'такси' ? 'selected' : ''}>🚕 Такси</option>
+                                        <option value="пешком" ${defaultTransports[i % defaultTransports.length] === 'пешком' ? 'selected' : ''}>🚶 Пешком</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function toggleParticipant(index) {
+            const content = document.getElementById(`participant-content-${index}`);
+            const chevron = document.getElementById(`chevron-${index}`);
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                chevron.className = 'fas fa-chevron-up';
+            } else {
+                content.style.display = 'none';
+                chevron.className = 'fas fa-chevron-down';
+            }
+        }
+
+        // Обработка выбора количества участников
+        document.querySelectorAll('.count-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.count-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentCount = parseInt(this.dataset.count);
+                document.getElementById('participantsCount').value = currentCount;
+                updateParticipantsForm();
+            });
+        });
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', () => {
+            updateParticipantsForm();
+        });
+    </script>
+</body>
+</html>
