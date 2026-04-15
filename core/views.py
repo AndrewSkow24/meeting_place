@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect
-from django.contrib import messages
 from datetime import datetime
 import random
 
@@ -7,7 +6,6 @@ import random
 def index(request):
     """Главная страница"""
     if request.method == 'POST':
-        # Сохраняем в сессию
         participants_count = int(request.POST.get('participants_count', 3))
         participants = []
 
@@ -20,7 +18,7 @@ def index(request):
             participants.append(participant)
 
         request.session['participants'] = participants
-        return redirect('core:calculate')
+        return redirect('calculate')
 
     return render(request, 'core/index.html')
 
@@ -32,7 +30,6 @@ def calculate(request):
     if not participants:
         return redirect('index')
 
-    # Генерируем результаты
     meeting_places = [
         {'name': 'ТРЦ "Европейский"', 'address': 'пл. Киевского Вокзала, 2',
          'description': 'Крупный ТЦ, удобная парковка, метро "Киевская"', 'rating': 4.8},
@@ -44,7 +41,6 @@ def calculate(request):
          'description': 'Для дружеских встреч', 'rating': 4.7},
     ]
 
-    # Расчёт маршрутов для каждого участника
     routes = []
     for p in participants:
         travel_time = random.randint(15, 50)
@@ -56,7 +52,6 @@ def calculate(request):
             'distance': random.randint(3, 20),
         })
 
-    # Выбираем 3 лучших места
     best_places = random.sample(meeting_places, min(3, len(meeting_places)))
     for i, place in enumerate(best_places):
         place['rank'] = i + 1
